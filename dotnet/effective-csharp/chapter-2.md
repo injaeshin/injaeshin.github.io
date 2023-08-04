@@ -69,11 +69,53 @@ finalizer(종료자) 는 객체가 소멸될 때 비 관리 리소스를 해제 
 
 ### 아이템 13: 정적 클래스 멤버를 올바르게 초기화하라
 
-- 
+- 정적(static) 멤버 변수를 포함하는 타입이 있다면, 인스턴스를 생성하기 전에 반드시 정적 멤버 변수를 초기화 해야 합니다. 이를 위해 두가지를 제공합니다.
+    - 정적 멤버 초기화
+        - 정적 생성자가 호출되기 이전에 실행되며, 베이스 클래스의 정적 생성자보다도 우선 호출된다.
+    - 정적 생성자
+        - 정의된 메서드, 변수, 속성에 최초로 접근하기 전에 자동으로 호출
+- 모든 타입은 정적 생성자를 하나만 가질 수 있으며 어떠한 인자도 넘길 수 없다.
+- 정적 생성자 내에서 예외가 발생하면 CLR은 TypeInitializationException을 던지고 응용 프로그램을 종료해버린다. 만약 예외를 잡아버리면, 일반적으로는 다시 객체 생성을 하지 못하는 문제가 생겨버린다.
 
 ### 아이템 14: 초기화 코드가 중복되는 것을 최소화하라
 
-- 
+- 복사 생성자로 인해 멤버 변수 초기화 코드를 반복해서 복붙하면 안된다.
+    - C++ 처럼 헬퍼 메서드로 분리하는것도 C# 에서는 효율적이지 못하다.
+    - IL 에서 각 생성자마다 자동으로 초기화 코드가 추가되는 문제가 생긴다.
+    - 헬퍼 메서드는 읽기 전용(readonly) 함수를 초기화하지 못한다.
+- 기본 생성자의 매개변수 기능을 활용하여 중복 코드를 줄일 수 있다.
+    
+    ```csharp
+    public class MyClass
+    {
+    	private List<ImportantData> coll;
+    	private string name;
+    
+    	public MyClass() : this(0, "") { }
+    	public MyClass(int initialCount) : this(initialCount, string.Empty) { }
+    	public MyClass(int initialCount, string name)
+    	{
+    		coll = (initialCount) > 0) ?
+    			new List<ImportantData>(initialCount) :
+    			new List<ImportantData>();
+    
+    		this.name = name;
+    	}
+    }
+    
+    ```
+    
+    - 기본 생성자의 매개변수 기본값은 컴파일타임 상수만 지정할 수 있다.
+    - 기본 생성자의 매개변수 기능을 활용하면 베이스 클래스의 생성자를 호출하는 코드와 인스턴스 변수를 초기화하는 코드가 각각의 생성자에 모두 포함되지 않는다. (마지막으로 호출되는 생성자에서만 베이스 클래스의 생성자가 호출된다)
+- 객체의 기본 초기화 과정
+    1. 정적 변수의 저장 공간을 0으로 초기화
+    2. 정적 변수에 대한 초기화 구문 실행
+    3. 베이스 클래스의 정적 생성자 수행
+    4. 정적 생성자 수행
+    5. 인스턴스 변수의 저장 공간을 0으로 초기화
+    6. 인스턴스 변수에 대한 초기화 구문 실행
+    7. 적절한 베이스 클래스의 인스턴스 생성자 수행
+    8. 인스턴스 생성자 수행
 
 ### 아이템 15: 불필요한 객체를 만들지 말라
 
@@ -263,17 +305,14 @@ namespace Sandbox
         }
     }
 }
+
+// 결과
+// Hello
+// Dispose in base
+// Dispose in derived
+// virtual Dispose in base
+
 ```
-
-<aside>
-💡 결과
-
-Hello
-Dispose in base
-Dispose in derived
-virtual Dispose in base
-
-</aside>
 
 1. using 의 구문이 종료되는 시점에 맞춰서 베이스 클래스의 Dispose 가 호출됨
 2. 객체는 파생클래스 타입으로 생성되었으므로, virtual Dispose 함수는 override 된 함수로 호출됨
