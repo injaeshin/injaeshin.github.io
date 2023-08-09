@@ -145,3 +145,93 @@ public sealed class EngineDriver<T> where T : IEngine
 	}
 } 
 ```
+
+### 아이템 22: 공변성과 반공변성을 지원하라
+
+- https://learn.microsoft.com/ko-kr/dotnet/csharp/programming-guide/concepts/covariance-contravariance/variance-in-generic-interfaces
+- 특정 타입의 객체를 다른 타입의 객체로 변환하는 성격 (배열, 인터페이스, 델리게이트)
+- 공변성(covariance)
+    - 파생 클래스 타입 객체를 베이스 클래스 타입으로 형변환
+    - out 키워드 (데코레이션) 로 지정함 - 내용 조회는 하지만 수정하지는 않을 것으로 판단함
+    
+    ```csharp
+    string str = "test";
+    object obj = str;
+    
+    IEnumerable<string> strings = new List<string>();
+    IEnumerable<object> objects = strings;
+    ```
+    
+- 반공변성(constravariance)
+    - 베이스 클래스 타입 객체를 파생 클래스 타입 객체로 형변환
+    - in 키워드 (데코레이션) 로 지정함
+    
+    ```csharp
+    //static void SetObject(object o) { }
+    Action<object> actObject = SetObject;  
+    Action<string> actString = actObject;
+    ```
+    
+
+### 아이템 23: 타입 매개변수에 대해 메서드 제약 조건을 설정하려면 델리게이트를 활용하라
+
+- 어떤 제네릭 클래스에 대해 타입 매개변수 T가 반드시 Add() 메서드를 가져야 한다는 제약이 있다면
+    - Add 메서드를 정의하는 IAdd<T> 인터페이스를 생성한다.
+    - IAdd<T> 인터페이스를 제약 조건으로 설정해야 한다.
+    - IAdd<T> 를 구현할 클래스를 생성하고, Add 메서드를 정의해야 한다.
+    - 여러가지 작업으로 인해 작업량도 많고 코드도 복잡해짐
+- 다른 방법으로 델리게이트를 사용하는 방법도 있다.
+    - 제약 조건으로 설정하고 싶은 메서드의 원형에 부합하는 델리게이트를 작업하는 것
+        
+        ```csharp
+        public static class Example
+        {
+        	public static T Add<T>(T left, T right, Func<T, T, T> AddFunc) => AddFunc(left, right);
+        }
+        
+        int a = 6;
+        int b = 7;
+        int sum = Example.Add(a, b, (x, y) => x + y);
+        ```
+        
+
+### 아이템 24: 베이스 클래스나 인터페이스에 대해서 제네릭을 특화하지 말라
+
+- 제네릭 메서드의 타입 매개변수로 특정 타입이 주어질 경우 그에 부합하도록 제네릭 특화를 수행하기로 결정했다면, 해당 타입뿐 아니라 이 타입을 상속한 모든 파생 타입에 대해서도 특화를 수행해야 한다. 인터페이스에 대해 특화를 수행하기로 결정했다면 이 인터페이스를 구현하고 있는 모든 타입에 대해서도 특화를 수행해야 한다.
+- !?..
+
+### 아이템 25: 타입 매개변수로 인스턴스 필드를 만들 필요가 없다면 제네릭 메서드를 정의하라
+
+- 무작정 제네릭 클래스를 만들것이 아니라, 제네릭 메서드를 만드는것이 도움이 된다.
+- 제네릭 클래스는 컴파일러의 입장에서 전체 클래스에 대하여 타입 매개변수에 대한 제약 조건을 고려하여 컴파일해야 하기 때문이다.
+- 일반 클래스 내에 제네릭 메서드들을 배치하면 각 메서드별로 제약 조건을 달리 설정할 수 있고, 요청되는 메서드의 원형에 좀 더 정확히 부합하는 메서드를 생성 할 수 있으므로 사용자 입장에서도 메서드를 활요하기가 수월해진다.
+
+### 아이템 26: 제네릭 인터페이스와 논제네릭 인터페이스를 함께 구현하라
+
+- C#의 제네릭이 포함되기 이전에 개발됐던 코드를 무시하기 어려운 상황이다. 고전적인 방식도 함께 지원한다면 라이브러리 활용도를 높일 수 있다.
+- 논제네릭 Equals() 메서드 내에서 IEquatable<T>.Equals() 메서드를 호출하도록 구현해야 한다. (GetHashCode 도 재정의해야 한다.)
+
+### 아이템 27: 인터페이스는 간략히 정의하고 기능의 확장은 확장 메서드를 사용하라
+
+- 인터페이스에는 가능한한 최소한의 기능만 정의하고 새로운 동작은 확장 메서드를 활용하면 API를 추가적으로 정의하지 않고도 새로운 기능을 추가할 수 있다.
+- 여러 클래스에서 반드시 구현해야 하는 인터페이스를 정의하는 경우 인터페이스 내에 정의하는 멤버의 수를 최소한으로 하기 위해 노력해야 한다.
+사용자 편의 기능은 확장 메서드 형태로 구현하는 것이 코드의 양을 줄일 수 있고, 코드량이 감소된다.
+- 기존 IComparable<T> 의 CompareTo의 반환값보다 새로운 확장 메서드의 네이밍으로 LessThan, GreaterThanEqual와 같이 명명하면 읽기가 더 쉽다.
+확장 메서드를 이용하면 이런 메서드를 구현하기 쉽다.
+- 
+
+### 아이템 28: 확장 메서드를 이용하여 구체화된 제네릭 타입을 개선하라
+
+- 구체화된 제네릭 타입을 상속하여 메서드를 추가하기보다는 화장 메서드를 구현하는 편이 훨씬 낫다.
+단순한 기능을 제공하는 메서드를 다양하게 재사용할 수 있다.
+
+```csharp
+public static IEnumerable<Customer> LostProspects(IEnumerable<Customer> targetList)
+{
+	IEnumerable<Customer> answer = from c in targetList
+																	where DateTime.Now - c.LastOrderDate > TimeSpan.FromDays(30)
+																	select c;
+	return answer;
+}
+```
+
