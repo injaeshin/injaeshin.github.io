@@ -1,23 +1,15 @@
-# 자료구조와 알고리즘 with C++
-
 - 코딩 테스트를 위한 자료 구조와 알고리즘 with C++
 
 ## 1장 리스트, 스택, 큐
 
 ### 연속된 자료 구조와 연결된 자료 구조
 
-- 연속된 자료 구조(contiguous data structures)
-    
-    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/4f020c85-fbf1-404b-aeb2-3dcee6a3f1fa/Untitled.png)
-    
+- 연속된 자료 구조(contiguous data structures)    
     - 모든 원소를 단일 메모리 청크(chunk)에 저장함
     - 모든 원소가 같은 타입 (같은 메모리를 사용)
     - 다음 원소로 이동은 현재 위치(BA, Base Address) + 메모리 타입 크기 * n 으로 이동 가능
     원소에 곧바로 접근할 수 있음 빅오 표기법으로 O(1)
 - 연결된 자료 구조(linked data structures)
-    
-    ![Untitled](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/735375b7-4bab-4494-a5d0-87618d711905/Untitled.png)
-    
     - 노드(node)라고 하는 여러 개의 메모리 청크에 데이터를 저장하며, 서로 다른 위치에 데이터가 저장
     - 노드에는 저장할 데이터(data)와 다음 노드를 가르키는 포인터(next)를 가지고 있음
     마지막 노드의 next 는 null 을 가지고 있음
@@ -353,16 +345,80 @@ O(n) 만큼 걸림
     - reverse - 원소 역순 정렬 O(n)
     - unique - 고유 원소만 남겨둠
     인접하여 중복되는 원소에 대해서만 비교 후 하나만 남겨둠
-    때문에 정렬 후 사용해야 함
+    때문에 정렬
+
+### std::list
+
+- 이중 연결 리스트 (doubly-linked list)
+- 다음 노드와 이전 노드가 연결되어 있다.
+    
+    ```cpp
+    struct doubly_linked_list_node
+    {
+    	int data;
+    	doubly_linked_list_node* next;
+    	doubly_linked_list_node* prev;
+    }
+    ```
+    
+- 삽입을 위한 insert, emplace 함수가 있음
+push_back, emplace_back 함수로 맨 뒤에 추가 가능함
+- pop_back 으로 삭제 가능함
+- 연습 문제 6: std::list의 삽입 또는 삭제 함수 사용하기
+    
+    ```cpp
+    std::list<int> list1 = { 1, 2, 3, 4, 5 };
+    list1.push_back(6);
+    // next는 이터레이터의 다음을 반환한다.
+    list1.insert(next(list1.begin()), 0);
+    list1.insert(list1.end(), 7);
+    list1.pop_back();
+    
+    for (auto i : list1)
+    	std::cout << i << " ";
+    ```
+    
+
+### std::deque
+
+- 다음 조건을 만족해야 한다.
+    - push_front(), pop_front(), push_back(), pop_back() 동작이 O(1) 시작 복잡도로 동작해야 한다.
+    - 모든 원소에 대해 임의 접근 동작이 O(1) 시간 복잡도로 동작해야 한다.
+    - 덱 중간에서 원소 삽입 또는 삭제는 O(n) 시간 복잡도로 동작해야 한다.
+    (실제로는 최대 n/2 단계로 동작한다.)
+- 양방향으로 빠르게 확장할 수 있어야 한다.
+모든 원소에 임의로 접근 할 수 있어야 한다.
+앞쪽과 뒤쪽으로 모두 확장할 수 있어야 한다.
+- 크기가 같은 여러 개의 메모리 청크를 사용하여 데이터를 저장함 (map)
+청크의 인덱스 및 크기를 이용하여 특정 위치의 원소가 어느 청크에 저장되어 있는지 알 수 있다. (Block - array)
+
+### std::stack
+
+- 컨테이너 한쪽 끝에서만 원소의 추가 및 삭제를 수행함 - LIFO (Last in First Out, 후입선출)
+- empty, size, top, push, pop, emplace 함수를 지원함
+- 모든 연산은 시간 복잡도가 O(1)
+
+### std::queue
+
+- FIFO (First In First Out, 선입선출) 기능이 있음
+- push, pop, front, back 함수를 지원함
+- 시간 복잡도는 O(1)
+
+### std::priority_queue
+
+- 가장 작은/큰 원소에 빠르게 접근할 수 있는 자료 구조 (한가지만 설정할 수 있다)
+- 최소/최대 원소에 접근하는 동작은 O(1)의 시간 복잡도를 가진다.
+- 원소 삽입은 O(logn) 시간 복잡도로 동작함
+- 원소 제거는 최소/최대 원소에 대해서만 가능
 
 ### 반복자(iterator)
 
 - STL 컨테이너에 대해 공통의 인터페이스를 제공한다.
 반복자 연산은 어떠한 컨테이너에서 정의된 반복자인지에 따라서 결정된다.
 - 임의 접근 반복자(random access iterator)
-    - 벡터와 배열은 연속된 자료구조를 사용하기 때문에 특정 위치의 원소에 곧바로 접근 가능
+    - 벡터와 배열은 연속된 자료구조를 사용하기 때문에 특정 위치의 원소에 곧바로 접근 가능하다.
 - 순방향 반복자(forward iterator)
-    - 반대 방향으로 이동하는 기능을 제공하지 않음. 이전 노드로 이동하려면 처음 노드부터 시작해서 다시 이동해야 함
+    - 반대 방향으로 이동하는 기능을 제공하지 않음. 이전 노드로 이동하려면 처음 노드부터 시작해서 다시 이동해야 한다.
 - 연습 문제 4: 다양한 반복자에서 이동하기
     
     ```cpp
@@ -532,11 +588,9 @@ O(n) 만큼 걸림
     }
     ```
     
-- 실습 문제 1: 음악 재생 목록 구현하
-
-### std::list
-
-### std::deque
+- 양방향 반복자(bidirectional iterators)
+- 역방향 반복자(reverse iterator)
+- 반복자 무효화
 
 ### 참고
 
