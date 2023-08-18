@@ -70,7 +70,44 @@
     ```
     
 - 1475 - 방 번호
+    - 풀이 -
+    6은 9로 9는 6으로 대체할 수 있다.
+    (arr[6] + arr[9] + 1) / 2 = 6 or 9의 수를 확인 가능함
     
+    ```cpp
+    #include <bits/stdc++.h>
+    using namespace std;
+    
+    int main()
+    {
+        ios::sync_with_stdio(0);
+        cin.tie(0);
+        
+        int ans[10] = {0, };
+        
+        int n = 0;
+        cin >> n;
+        
+        while (n > 0) {
+            ans[n % 10]++;
+            n /= 10;
+        }
+        
+        int ret = 0;
+        for (int i = 0; i < 10; i++) {
+            if (i == 6 || i == 9) {
+                continue;
+            }
+            
+            ret = max(ret, ans[i]);
+        }
+        
+        ret = max(ret, (ans[6] + ans[9] + 1) / 2);
+        cout << ret;
+        
+        return 0;
+    }
+    ```
     
 - 3273 - 두 수의 합
     
