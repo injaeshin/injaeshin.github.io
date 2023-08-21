@@ -1,3 +1,5 @@
+# 알고리즘 문제풀이
+
 - [https://blog.encrypted.gg/category/강좌/실전 알고리즘?page=2](https://blog.encrypted.gg/category/%EA%B0%95%EC%A2%8C/%EC%8B%A4%EC%A0%84%20%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98?page=2)
 - https://github.com/encrypted-def/basic-algo-lecture/blob/master/workbook.md
 
@@ -514,8 +516,92 @@
     ```
     
 - 5397 - 키로거
+    - 풀이 - 문자열 L이 주어진다. (1 ~ 1,000,000)
+    백스페이스를 입력했다면 - 앞의 글자가 있다면 그 글자를 지운다.
+    <, > 는 움직일 수 있다면 커서를 1 이동한다.
     
+    ```cpp
+    #include <bits/stdc++.h>
+    using namespace std;
+    
+    int main()
+    {
+        ios::sync_with_stdio(0);
+        cin.tie(0);
+    
+        int n = 0;
+        cin >> n;
+    
+        for (int i = 0; i < n; i++) {
+            list<char> lt;
+            auto p = lt.begin();
+            
+            string s;
+            cin >> s;
+            for(auto c : s) {
+                if (c == '<') {
+                    if (p != lt.begin())
+                        p--;
+                } else if (c == '>') {
+                    if (p != lt.end())
+                        p++;
+                } else if (c == '-') {
+                    if (p != lt.begin()) {
+                    	p--;
+                        p = lt.erase(p);
+                    }
+                } else {
+                    lt.insert(p, c);
+                }
+            }
+            
+            for(auto c : lt) {
+                cout << c;
+            }
+            cout << '\n';
+        }
+        
+        return 0;
+    }
+    ```
     
 - 1158 - 요세푸스 문제
+    - 1부터 N까지 리스트가 있음. K번째 숫자를 제거함. 이후 +K 번째 숫자를 제거함. 리스트의 숫자를 모두 제거한 하면 제거된 순서대로 출력
     
-    ㅂ
+    ```cpp
+    #include <bits/stdc++.h>
+    using namespace std;
+    
+    int main()
+    {
+        ios::sync_with_stdio(0);
+        cin.tie(0);
+    
+        int n = 0, k = 0;
+        cin >> n >> k;
+        
+        queue<int> q;
+        for (int i = 1; i <= n; i++) {
+            q.push(i);
+        }
+        
+        cout << "<";
+        while(!q.empty()) {
+            for (int i = 0; i < k - 1; i++) {
+                q.push(q.front());
+                q.pop();
+            }
+            
+            cout << q.front();
+            q.pop();
+            
+            if (q.size())
+                cout << ", ";
+        }
+        
+        cout << ">";
+    }
+    ```
+    
+
+### 0x05 스택
