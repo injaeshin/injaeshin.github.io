@@ -605,3 +605,67 @@
     
 
 ### 0x05 스택
+
+- 10828 - 스택
+    
+    ```cpp
+    #include <bits/stdc++.h>
+    using namespace std;
+    
+    int main()
+    {
+        ios::sync_with_stdio(0);
+        cin.tie(0);
+    
+        stack<int> stk;
+        
+        int n = 0;
+        cin >> n;
+        
+        while(n--) {
+            string s;
+            cin >> s;
+            
+    
+            if (s == "push") {
+                int v;
+                cin >> v;
+                stk.push(v);
+            }
+            else if (s == "top") {
+                if (stk.size() == 0)
+                    cout << "-1" << "\n";
+                else
+                    cout << stk.top() << "\n";
+            }
+            else if (s == "size") {
+                cout << stk.size() << "\n";
+            }
+            else if (s == "empty") {
+                cout << ((stk.empty()) ? "1" : "0") << "\n";
+            }
+            else if (s == "pop") {
+                if (stk.size() == 0) {
+                    cout << "-1" << "\n";
+                } 
+                else {
+                    cout << stk.top() << "\n";
+                    stk.pop();
+                }
+            }
+        }
+        
+        return 0;
+    }
+    ```
+    
+- 10774 - 제로
+    
+    ㅁ
+    
+- 1874 - 스택 수열
+- 2493 - 탑
+- 6198 - 옥상 정원 꾸미기
+- 17298 - 오큰수
+- 3015 - 오아시스 재결합
+- 6549 - 히스토그램에서 가장 큰 직사각
