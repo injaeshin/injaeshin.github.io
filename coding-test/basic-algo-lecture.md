@@ -660,10 +660,51 @@
     ```
     
 - 10774 - 제로
+    - K : 1 ~ 100,000
+    0이 아닌 경우 입력값을 저장함
+    0인 경우 가장 최근 저장한 수를 삭제함
+    전체 수의 합을 출력한다.
     
-    ㅁ
+    ```cpp
+    #include <bits/stdc++.h>
+    using namespace std;
+    
+    int main()
+    {
+        ios::sync_with_stdio(0);
+        cin.tie(0);
+        
+        int K = 0;
+        cin >> K;
+        
+        stack<int> stk;
+        
+        for (int i = 0; i < K; i++) {
+            int n = 0;    
+            cin >> n;
+            
+            if (n == 0) {
+                stk.pop();
+            } else {
+                stk.push(n);
+            }
+        }
+        
+        int ans = 0;
+        while (!stk.empty()) {
+            ans += stk.top();
+            stk.pop();
+        }
+    
+        cout << ans;
+        
+        return 0;
+    }
+    ```
     
 - 1874 - 스택 수열
+    
+    
 - 2493 - 탑
 - 6198 - 옥상 정원 꾸미기
 - 17298 - 오큰수
