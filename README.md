@@ -1,6 +1,3 @@
-
-
-
 ## C#
 * [이펙티브 C#](https://github.com/injaeshin/injaeshin.github.io/tree/main/dotnet/effective-csharp)
 * [CLR via C#](https://github.com/injaeshin/injaeshin.github.io/tree/main/dotnet/clr-via-csharp)
@@ -10,3 +7,5 @@
 
 ## 디자인 패턴
 * [게임 프로그래밍 패턴](https://github.com/injaeshin/injaeshin.github.io/tree/main/design-pattern/game-porgramming-patterns)
+
+## 알고리즘 문제풀이
