@@ -7,5 +7,3 @@
 
 ## 디자인 패턴
 * [게임 프로그래밍 패턴](https://github.com/injaeshin/injaeshin.github.io/tree/main/design-pattern/game-porgramming-patterns)
-
-## 알고리즘 문제풀이
